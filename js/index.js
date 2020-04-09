@@ -1,537 +1,88 @@
-let path = "https://raw.githubusercontent.com/ajdeguzman/pangasinan-covid19-tracker/master/";
-let caseNumArr = [];
-let cityArr = [];
-let arrayCode = [];
-let cityCaseArr = [];
+var sheetNameRange = "Report!A1:B13";
+var spreadsheetUrl = 'https://sheets.googleapis.com/v4/spreadsheets/1on2-Uew2bdrU-ZoeRGO0LZPi9c4dYs5e7PollFRKKmM/values/' + 
+                      sheetNameRange + '?key=AIzaSyCrg4I0wSZMMQ9_uWbW6pXQLFoTerawhGM';
 
-function getTWData() {
-  return new Promise(function (resolve, reject) {
-    $.ajax({
-      url: path + "pangasinan-report.json",
-      type: "GET",
-      success: function (data) {
-        parseJSON = $.parseJSON(data);
-        console.log(parseJSON[0]);
-        diagnoseNum = parseJSON[0];
-        releaseNum = parseJSON[0];
-        deadNum = parseJSON[0];
-        inspectNum = parseJSON[0];
-        excludeNum = parseJSON[0]
-        ysdDiagnoseNum = parseJSON[0];
-        ysdInspectionNum = parseJSON[0];
-        ysdExcludeNum = parseJSON[0];
-        // console.log(
-        //   diagnoseNum, releaseNum, deadNum, inspectNum, excludeNum, ysdDiagnoseNum, ysdInspectionNum, ysdExcludeNum
-        // );
+function getPangData() {
+      $.ajax({
+        url: spreadsheetUrl,
+        type: "GET",
+        success: function (data) {
+          parseJSON = data.values;
+          
+          console.log(parseJSON);
 
-      },
-      error: function (data) {
-        console.log(data);
-      },
-      complete: function (data) {
-        // console.log(data);
-        TWObjData = {
-          "diagnoseNum": diagnoseNum,
-          "releaseNum": releaseNum,
-          "deadNum": deadNum,
-          "inspectNum": inspectNum,
-          "excludeNum": excludeNum,
-          "ysdDiagnoseNum": ysdDiagnoseNum,
-          "ysdInspectionNum": ysdInspectionNum,
-          "ysdExcludeNum": ysdExcludeNum
+          asOfDate = parseJSON[0][1];
+          totalCasesNum = parseJSON[1][1];
+          totalDeathNum = parseJSON[2][1];
+          totalConfinedNum = parseJSON[3][1];
+          totalRecoveredNum = parseJSON[4][1];
+          totalPUINum = parseJSON[5][1];
+          totalPUIDeathNum = parseJSON[6][1];
+          totalPUIConfinedNum = parseJSON[7][1];
+          totalPUIRecoveredNum = parseJSON[8][1];
+          totalPUMNum = parseJSON[9][1];
+          totalPUMQuarantinedNum = parseJSON[10][1];
+          totalPUMCompletedQuarantineNum = parseJSON[11][1];
+          totalPUMIncompleteQuarantineNum = parseJSON[12][1];
+        },
+        error: function (data) {
+          console.log(data);
+        },
+        complete: function (data) {
+          console.log(data);
+          PangObjData = {
+            "asOfDate": asOfDate,
+            "totalCasesNum": totalCasesNum,
+            "totalDeathNum": totalDeathNum,
+            "totalConfinedNum": totalConfinedNum,
+            "totalRecoveredNum": totalRecoveredNum,
+            "totalPUINum": totalPUINum,
+            "totalPUIDeathNum": totalPUIDeathNum,
+            "totalPUIConfinedNum": totalPUIConfinedNum,
+            "totalPUIRecoveredNum": totalPUIRecoveredNum,
+            "totalPUMNum": totalPUMNum,
+            "totalPUMQuarantinedNum": totalPUMQuarantinedNum,
+            "totalPUMCompletedQuarantineNum": totalPUMCompletedQuarantineNum,
+            "totalPUMIncompleteQuarantineNum": totalPUMIncompleteQuarantineNum
+          }
+          renderData(PangObjData);
         }
-        renderData(TWObjData);
-      }
-    });
-    resolve();
-  });
-}
+      });
+  }
 
-function renderData(TWObjData) {
-  // $("#ysdExcludeTitle").html(returnData.Title + ' <i class="fas fa-child"></i>');
-  $("#ysdExcludeNum").html(TWObjData.ysdExcludeNum);
+  function renderData(PangObjData) {
+  
+    $("#asOfDate").append('<br>(As of ' + PangObjData.asOfDate + ')');
 
-  // $("#ysdInspectionTitle").html(returnData.Title + ' <i class="fas fa-ambulance fa-sm"></i>');
-  $("#ysdInspectionNum").html(ysdInspectionNum);
+    $("#totalCasesNum").html(PangObjData.totalCasesNum);
+  
+    $("#totalConfinedNum").html(PangObjData.totalConfinedNum);
+  
+    $("#totalRecoveredNum").html(PangObjData.totalRecoveredNum);
+  
+    $("#totalDeathNum").html(PangObjData.totalDeathNum);
+  
+    $("#totalPUINum").html(PangObjData.totalPUINum);
+  
+    $("#totalPUIDeathNum").html(PangObjData.totalPUIDeathNum);
+  
+    $("#totalPUIConfinedNum").html(PangObjData.totalPUIConfinedNum);
+  
+    $("#totalPUIRecoveredNum").html(PangObjData.totalPUIRecoveredNum);
+  
+    $("#totalPUMNum").html(PangObjData.totalPUMNum);
+  
+    $("#totalPUMQuarantinedNum").html(PangObjData.totalPUMQuarantinedNum);
+  
+    $("#totalPUMCompletedQuarantineNum").html(PangObjData.totalPUMCompletedQuarantineNum);
+  
+    $("#totalPUMIncompleteQuarantineNum").html(PangObjData.totalPUMIncompleteQuarantineNum);
+  }
 
-  // $("#excludeTitle").html(returnData.Title + ' <i class="fas fa-child"></i>');
-  $("#excludeNum").html(TWObjData.excludeNum);
-
-  // $("#inspectTitle").html(returnData.Title + ' <i class="fas fa-ambulance fa-sm"></i>');
-  $("#inspectNum").html(TWObjData.inspectNum);
-
-  //  $("#releaseTitle").html(returnData.Title + ' <i class="fas fa-smile"></i>')
-  $("#releaseNum").html(TWObjData.releaseNum);
-
-  //  $("#ysdDiagnoseTitle").html('昨日' + returnData.Title + ' <i class="fas fa-syringe"></i>');
-  $("#ysdDiagnoseNum").html(TWObjData.ysdDiagnoseNum);
-
-  //  $("#deadTitle").html(returnData.Title + ' <i class="fas fa-skull-crossbones"></i>');
-  $("#deadNum").html(TWObjData.deadNum);
-
-  //  $("#diagnoseTitle").html('總' + returnData.Title + ' <i class="far fa-hospital"></i>');
-  $("#diagnoseNum").html(TWObjData.diagnoseNum);
-}
-
-function diagnose() {
-  return new Promise(function (resolve, reject) {
-    $.ajax({
-      url: path + "api-diagnose.php",
-      type: "GET",
-      dataType: "html",
-      async: false,
-      success: function (data) {
-        returnData = getNumAndTitle(data);
-        // console.log(returnData);
-      },
-      error: function (data) {
-        console.log(data);
-
-      },
-      complete: function () {
-        // console.log(returnData);
-        $("#diagnoseTitle").html('總' + returnData.Title + ' <i class="far fa-hospital"></i>');
-        $("#diagnoseNum").html(returnData.CaseNum);
-        // return decodeStr;
-      }
-    });
-
-    resolve(returnData);
-  });
-}
-
-function dead() {
-  $.ajax({
-    url: path + "api-dead.php",
-    type: "GET",
-    dataType: "html",
-    async: false,
-    success: function (data) {
-      returnData = getNumAndTitle(data);
-    },
-    error: function (data) {
-      console.log(data);
-    },
-    complete: function () {
-      $("#deadTitle").html(returnData.Title + ' <i class="fas fa-skull-crossbones"></i>');
-      $("#deadNum").html(returnData.CaseNum);
-
-    }
-  });
-
-}
-
-function ysdDiagnose() {
-  $.ajax({
-    url: path + "api-ysdDiagnose.php",
-    type: "GET",
-    dataType: "html",
-    async: false,
-    success: function (data) {
-      returnData = getNumAndTitle(data);
-    },
-    error: function (data) {
-      console.log(data);
-    },
-    complete: function () {
-      $("#ysdDiagnoseTitle").html('昨日' + returnData.Title + ' <i class="fas fa-syringe"></i>');
-      $("#ysdDiagnoseNum").html(returnData.CaseNum);
-
-    }
-  });
-
-}
-
-function release() {
-  $.ajax({
-    url: path + "api-release.php",
-    type: "GET",
-    dataType: "html",
-    async: false,
-    success: function (data) {
-      returnData = getNumAndTitle(data);
-    },
-    error: function (data) {
-      console.log(data);
-    },
-    complete: function () {
-      $("#releaseTitle").html(returnData.Title + ' <i class="fas fa-smile"></i>')
-      $("#releaseNum").html(returnData.CaseNum)
-
-    }
-  });
-
-}
-
-function inspect() {
-  $.ajax({
-    url: path + "api-inspect.php",
-    type: "GET",
-    dataType: "html",
-    async: false,
-    success: function (data) {
-      returnData = getNumAndTitle(data);
-    },
-    error: function (data) {
-      console.log(data);
-    },
-    complete: function () {
-      $("#inspectTitle").html(returnData.Title + ' <i class="fas fa-ambulance fa-sm"></i>');
-      $("#inspectNum").html(returnData.CaseNum);
-
-    }
-  });
-
-}
-
-function exclude() {
-  $.ajax({
-    url: path + "api-exclude.php",
-    type: "GET",
-    dataType: "html",
-    async: false,
-    success: function (data) {
-      returnData = getNumAndTitle(data);
-    },
-    error: function (data) {
-      console.log(data);
-    },
-    complete: function () {
-      $("#excludeTitle").html(returnData.Title + ' <i class="fas fa-child"></i>');
-      $("#excludeNum").html(returnData.CaseNum);
-
-    }
-  });
-
-}
-
-function ysdInspection() {
-  $.ajax({
-    url: path + "api-ysdInspection.php",
-    type: "GET",
-    dataType: "html",
-    async: false,
-    success: function (data) {
-      returnData = getNumAndTitle(data);
-    },
-    error: function (data) {
-      console.log(data);
-    },
-    complete: function () {
-      $("#ysdInspectionTitle").html(returnData.Title + ' <i class="fas fa-ambulance fa-sm"></i>');
-      $("#ysdInspectionNum").html(returnData.CaseNum);
-
-    }
-  });
-
-}
-
-function ysdExclude() {
-  $.ajax({
-    url: path + "api-ysdExclude.php",
-    type: "GET",
-    dataType: "html",
-    async: false,
-    success: function (data) {
-      returnData = getNumAndTitle(data);
-    },
-    error: function (data) {
-      console.log(data);
-    },
-    complete: function () {
-      $("#ysdExcludeTitle").html(returnData.Title + ' <i class="fas fa-child"></i>');
-      $("#ysdExcludeNum").html(returnData.CaseNum);
-    }
-  });
-}
-
-// function notice() {
-//   $.ajax({
-//     url: path + "api-notice.php",
-//     type: "GET",
-//     dataType: "html",
-//     async: false,
-//     success: function (data) {
-//       returnData = getNumAndTitle(data);
-//     },
-//     error: function (data) {
-//       console.log(data);
-//     },
-//     complete: function (data) {
-//       // console.log(data);
-//       console.log(decodeStr);
-//       return decodeStr;
-//     }
-//   });
-//   return decodeStr;
-// }
 
 function render() {
-  getTWData()
-    // .then(dead)
-    // .then(ysdDiagnose)
-    // .then(release)
-    // .then(inspect)
-    // .then(exclude)
-    // .then(ysdInspection)
-    // .then(ysdExclude)
-    .then(nConVList);
-
+  getPangData();
+    //.then(nConVList);
 }
-
-function getNumAndTitle(data) {
-  try {
-    scriptParse = $(data).filter('script')[1];
-    strSrc = $(scriptParse).html().toString();
-    var rex = /(\\x7b\\x22view).*(\\x7d\\x7d)/gmi;
-    matchStr = strSrc.match(rex)[0];
-    decodeStr = JSON.parse(decode(matchStr));
-    CaseNum = decodeStr.dataTable.rows[0].c[0].f;
-    Title = decodeStr.options.title;
-
-    returnData = {
-      "CaseNum": CaseNum,
-      "Title": Title
-    };
-  } catch (e) {
-    // console.log(e);
-    returnData = {
-      "CaseNum": "error",
-      "Title": "error"
-    }
-  }
-
-  return returnData;
-}
-
-function decode(str) {
-  try {
-    return !/([^\\]'|\r|\n)/.test(str) ? eval("'" + str + "'") : false;
-  } catch (e) {
-    return false;
-  }
-}
-
-function nConVList() {
-  $.ajax({
-    url: path + "pangasinan-report.json",
-    type: "GET",
-    success: function (data) {
-      // console.log(data);
-      parseJSON = $.parseJSON(data);
-      console.log(parseJSON);
-      parseJSON.forEach((v, i) => {
-        // console.log(v);
-        caseMonth = v.totalCases;
-        // console.log(isOutCase);
-        caseNumInt = parseInt(caseNum, 10);
-        caseNumArr.push(caseNumInt);
-        cityArr.push(caseCity);
-        if (caseSex === "F") {
-          caseSex = "女";
-        } else {
-          caseSex = "男";
-        };
-        if (isOutCase == "是") {
-          isOutCaseIcon = '<i class="far fa-circle text-success"></i>';
-        } else {
-          isOutCaseIcon = '<i class="fas fa-times text-danger"></i>';
-        }
-        caseCityCode = findCityCode(caseCity).cityCode;
-        caseCityName = findCityCode(caseCity).cityName;
-        // console.log(caseCityName);
-        // console.log(caseNumInt);
-        // console.log(caseCityCode);
-        let cityCaseObj = {
-          'caseCityCode': caseCityCode,
-          'caseCityName': '' + caseCityName + '',
-          'caseCityNum': caseNumInt
-        };
-        cityCaseArr.push(cityCaseObj);
-
-        $("#nConVList").append(
-          '<tr><td>' + caseMonth + '</td><td data-order="' + caseCityCode + '">' + caseCity +
-          '</td><td>' + caseSex + '</td><td>' +
-          caseAge + '</td><td>' + caseNum + '</td><td>' + isOutCaseIcon + '</td></tr>');
-      });
-      // parseJSON = $.parseJSON(data);
-    },
-    error: function (data) {
-      console.log(data);
-    },
-    complete: function () {
-      // console.log(cityCaseArr);
-      caseNumTotal = caseNumArr.reduce((a, b) => a + b);
-      // console.log(caseNumTotal);
-      cityCaseArr.sort((a, b) => {
-        return a.caseCityCode - b.caseCityCode;
-      });
-      countCityCase(cityCaseArr);
-      nCovDataTable();
-      renderSVGColor();
-      $(".loading").css({
-        "display": "none"
-      });
-    }
-  });
-}
-
-function rgbToHex(r, g, b) {
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
-
-function renderSVGColor() {
-  for (let i = 1; i < 22; i++) {
-    cName = $("#TW_" + i + " > th").text();
-    cNum = parseInt($("#TW_" + i + " > td").text(), 10) * 5;
-    let r = 255;
-    let g = 255 - cNum;
-    let b = g;
-
-    if (g <= 0) {
-      g = 0;
-      b = g;
-    }
-
-    hexColor = rgbToHex(r, g, b);
-    // console.log(hexColor);
-    $("#tw-map-" + i).css({
-      "fill": hexColor,
-    });
-    // console.log(cName, cNum);
-  }
-}
-
-function countCityCase(cityCaseArr) {
-  let prevCityCode = 1;
-  for (const i in cityCaseArr) {
-
-    currCityCode = cityCaseArr[i].caseCityCode;
-    // console.log(currCityCode);
-    if (prevCityCode != currCityCode) {
-      // console.log(currCityCode, prevCityCode);
-      prevCityCode = currCityCode;
-      currCaseCityNum = cityCaseArr[i].caseCityNum;
-      $("#TW_" + currCityCode + " > td").html("<span class='text-warning'>" + currCaseCityNum + "</span>");
-    } else if (prevCityCode == currCityCode) {
-      // console.log("pc:" + currCityCode, prevCityCode);
-      prevCaseCityNum = parseInt($("#TW_" + prevCityCode + " > td").text(), 10);
-      currCaseCityNum = parseInt(cityCaseArr[i].caseCityNum, 10);;
-      NewCaseCityNum = prevCaseCityNum + currCaseCityNum;
-      $("#TW_" + prevCityCode + " > td").html("<span class='text-warning'>" + NewCaseCityNum + "</span>");
-    }
-  }
-  TW_1_Num = parseInt($("#TW_1 > td").text(), 10) - 1;
-  $("#TW_1 > td").html("<span class='text-warning'>" + TW_1_Num + "</span>");
-  // console.log(TW_1_Num);
-
-}
-
-// $("#tw-city-list tr").hover(function () {
-//   // console.log($(this).find("td").attr("id"));
-//   cityID = $(this).find("td").attr("id").replace("TW_", "");
-//   // cityID.replace("TW_", "");
-//   // console.log(cityID);
-//   $("#tw-map-" + cityID).css({
-//     "fill": "#6DD0A6",
-//   });
-//   // cityID = $(this).attr("id");
-// }, function () {
-//   // console.log("end");
-//   $("#tw-map-" + cityID).css({
-//     "fill": "#fff",
-//   });
-// });
-
-function nCovDataTable() {
-  $('#nCoVCaseTable').DataTable({
-    "paging": true,
-    "searching": false,
-    "info": false,
-    "pageLength": 5,
-    "language": {
-      "paginate": {
-        'first': 'First page',
-        'previous': '&laquo;',
-        'next': '&raquo;',
-        'last': 'Last Page',
-
-      },
-      "lengthMenu": 'Display <select>' +
-        '<option value="5">5</option>' +
-        '<option value="10">10</option>' +
-        '<option value="25">25</option>' +
-        '<option value="50">50</option>' +
-        '<option value="100">100</option>' +
-        '<option value="-1">All</option>' +
-        '</select> Writing Material'
-    }
-  });
-  $("#cityListTable").DataTable({
-    "paging": false,
-    "searching": false,
-    "info": false,
-    "orderFixed": [
-      [1, "desc"],
-      [0, "desc"]
-    ],
-    "columns": [{
-        "orderable": false
-      },
-      {
-        "orderable": false
-      },
-    ],
-    "columnDefs": [{
-      "orderable": false,
-      "targets": 0
-    }]
-  });
-}
-
-function sortCity(cityArr) {
-  cityArr.forEach((v, i) => {
-    // console.log(v);
-    arrV = v;
-    cityObj = findCityCode(arrV);
-    console.log(cityObj);
-    arrayCode.push(cityObj);
-  });
-
-  // console.log(arrayCode);
-  arrayCode.sort((a, b) => {
-    return a.cityCode - b.cityCode;
-  });
-  // console.log(arrayCode);
-  return arrayCode;
-}
-
-function findCityCode(arrV) {
-  $.ajax({
-    url: "json/pangasinan-muni-city-code.json",
-    type: "GET",
-    async: false,
-    success: function (data) {
-      // console.log(data);
-      cityCode = data.cityCode;
-      cityName = data.cityName;
-      for (let i in data) {
-        jsonCity = data[i].cityName;
-        if (arrV === jsonCity) {
-          // console.log(jsonCity);
-          code = parseInt(i, 10);
-          cityObj = {
-            'cityCode': code + 1,
-            'cityName': '' + jsonCity + ''
-          };
-          // console.log(cityObj);
-          return cityObj;
-        }
-      }
-    }
-  });
-  return cityObj;
-}
-
 
 render();
